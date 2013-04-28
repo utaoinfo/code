@@ -185,5 +185,18 @@ class IModel
 
 		return $this->db->query($sql);
 	}
+
+
+	/**
+	 * @brief 执行SQL语句，并返回查询结果
+	 * @param string $sql 查询语句
+	 * @return array 查询结果
+	 */
+	public function query_sql($sql)
+	{
+
+		return $this->db->query($sql);
+	}
+
 }
 ?>

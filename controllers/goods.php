@@ -478,6 +478,7 @@ class Goods extends IController
 		$goods_sellernick = IFilter::act(IReq::get('goods_sellernick'));;
 		$goods_commission = IFilter::act(IReq::get('goods_commission'),'float');
 		$goods_url = IFilter::act(IReq::get('goods_url'));
+		$goods_img = IFilter::act(IReq::get('goods_img'));
 
 		$sell_price = IFilter::act(IReq::get('sell_price'),'float');
 		$market_price = IFilter::act(IReq::get('market_price'),'float');
@@ -493,6 +494,7 @@ class Goods extends IController
 		$sort = IFilter::act(IReq::get('sort'),'int');
 		$focus_photo = IFilter::act(IReq::get('focus_photo'));
 		$goods_no = IFilter::act(IReq::get('goods_no'));
+
 		$keywords_for_search = IFilter::act(IReq::get('keywords_for_search'));
 		//判断货号如果存在则不能添加
 		if($goods_no)
@@ -525,6 +527,7 @@ class Goods extends IController
 				Util::showMessage('您输入的商品货号已存在，请重新输入!');
 			}
 		}
+
 		//大图片
 		$show_img = $focus_photo;
 		$list_img = $focus_photo;
@@ -544,6 +547,8 @@ class Goods extends IController
 		 	$list_img = $head.'_'.$list_thumb_width.'_'.$list_thumb_height.$foot;
 		 	//show
 		 	$show_img = $head.'_'.$show_thumb_width.'_'.$show_thumb_height.$foot;
+		}elseif($goods_img){
+			$focus_photo = $goods_img;
 		}
 		//规格
 		$spec_va = IReq::get('spec_va');
@@ -585,6 +590,7 @@ class Goods extends IController
 				$i++;
 			}
 		}
+
 		/*goods表操作*/
 		$tb_goods = new IModel('goods');
 		$tb_goods ->setData(array(
@@ -619,6 +625,7 @@ class Goods extends IController
 			'list_img'=>$list_img
 		));
 		$goods_id = $tb_goods->add();
+		
 		if(!$goods_no)
 		{
 			//如用户没有输入商品货号，则默认货号
@@ -887,6 +894,7 @@ class Goods extends IController
 			$tb_goods->setData($addition);
 			$tb_goods->update('id='.$goods_id);
 		}
+
 		$this->redirect("goods_list");
 	}
 	/**
@@ -907,6 +915,7 @@ class Goods extends IController
 		$goods_sellernick = IFilter::act(IReq::get('goods_sellernick'));;
 		$goods_commission = IFilter::act(IReq::get('goods_commission'),'float');
 		$goods_url = IFilter::act(IReq::get('goods_url'));
+		$goods_img = IFilter::act(IReq::get('goods_img'));
 
 		$sell_price = IFilter::act(IReq::get('sell_price'),'float');
 		$market_price = IFilter::act(IReq::get('market_price'),'float');
@@ -1008,6 +1017,8 @@ class Goods extends IController
 		 	$list_img = $head.'_'.$list_thumb_width.'_'.$list_thumb_height.$foot;
 		 	//show
 		 	$show_img = $head.'_'.$show_thumb_width.'_'.$show_thumb_height.$foot;
+		}elseif($goods_img){
+			$focus_photo = $goods_img;
 		}
 		//规格
 		$spec_va = IReq::get('spec_va');

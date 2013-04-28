@@ -79,6 +79,7 @@ class goods_class
 			'sellernick'    =>  $goods_info['sellernick'],
 			'commission'    =>  $goods_info['commission'],
 			'url'        	=>  $goods_info['url'],
+			'img'        	=>  $goods_info['img'],
 			'up_time'		=>	$goods_info['up_time'],
 			'down_time'		=>	$goods_info['down_time'],
 			'sell_price'	=>	$goods_info['sell_price'],

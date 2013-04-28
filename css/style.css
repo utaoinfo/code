@@ -49,7 +49,7 @@ ul.menu li a:hover, ul.menu li.active a { color: #70a3b4; text-decoration: none;
 #main { padding: 25px 0px 40px; }
 
 /*** Slideshow ***/
-#slideshow { background: #cccccc; height: 380px!important; margin: 0px 10px 50px; position: relative; width: 940px; -moz-box-shadow: 0 0 5px #888; -webkit-box-shadow: 0 0 5px#888; box-shadow: 0 0 5px #888; }
+#slideshow { background: #cccccc; height: 320px!important; margin: 0px 10px 50px; position: relative; width: 940px; -moz-box-shadow: 0 0 5px #888; -webkit-box-shadow: 0 0 5px#888; box-shadow: 0 0 5px #888; }
 #slideshow .nivo-controlNav { bottom: -40px; left: 50%; margin-left: -30px; position: absolute;  }
 #slideshow .nivo-controlNav .nivo-control { background: url(../images/bullets.png) no-repeat; display: block; float: left; height: 20px; text-indent: -9999px; width: 22px; }
 #slideshow .nivo-controlNav .nivo-control.active { background: url(../images/bullets.png) no-repeat scroll 0 -22px; }
@@ -58,11 +58,12 @@ ul.menu li a:hover, ul.menu li.active a { color: #70a3b4; text-decoration: none;
 .intro { margin: 0px 10px 50px; }
 .intro p { font-size: 22px; text-align: center; }
 
-#about { margin: 0px 10px; }
-#about .column { float: left; margin-right: 40px; width: 200px; }
-#about .column.last { margin-right: 0px; }
-#about .column .image { background: #cccccc; height: 120px; margin-bottom: 15px; width: 200px; -moz-box-shadow: 0 0 5px #888; -webkit-box-shadow: 0 0 5px#888; box-shadow: 0 0 5px #888; }
-#about .column h2 { color: #000000; font-family: Georgia, Serif; font-size: 16px; }
+.row { margin: 0px 10px; }
+.row .column { float: left; margin-right: 40px; width: 200px; }
+.row .column.last { margin-right: 0px; }
+.row .column .image { background: #cccccc; height: 160px; margin-bottom: 15px; width: 200px; -moz-box-shadow: 0 0 5px #888; -webkit-box-shadow: 0 0 5px#888; box-shadow: 0 0 5px #888; }
+.row .column .image img{ height: 160px;width: 200px;}
+.row .column h2 { color: #000000; font-family: Georgia, Serif; font-size: 16px; }
 
 /*** Footer ***/
 #footer { background: #e4e4e4; border-top: 1px solid #d9d9d9; height: 46px; }

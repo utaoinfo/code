@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="Project Description" />
-    <meta name="keywords" content="Project Keywords" />
-    <title>{echo:$siteConfig->name}</title>	
+    <meta name="description" content="{$description}" />
+    <meta name="keywords" content="{$keywords}" />
+    <title>{$title}</title>	
     <link href="css/style.css" rel="stylesheet" type="text/css" />	
 	<link href="css/nivo-slider.css" rel="stylesheet" type="text/css" />
     <!--[if IE]><link href="css/style-ie.css" rel="stylesheet" type="text/css" /><![endif]-->
@@ -21,58 +21,48 @@
 
 <body>
 
-
 <div id="header">
 	<div class="container">
 		<h1>
-			<a href="/" title="Dilasag">Dilasag</a>
+			<a href="/" title="Utao">Utao</a>
 		</h1>
-
-		<ul class="menu fr">	
-			<li class="active"><a href="index.html" title="Home">Home</a></li>
-			<li><a href="about.html" title="About">About</a></li>
-			<li><a href="gallery.html" title="Gallery">Gallery</a></li>
-			<li><a href="blog.html" title="Blog">Blog</a></li>
-			<li><a href="contact-us.html" title="Contact Us">Contact Us</a></li>
+		{if:$guide_list}
+		<ul class="menu fr">
+			{foreach:items=$guide_list}	
+			<li {if:$key==0}class="active"{/if}><a href="{$item['link']}" title="{$item['name']}">{$item['name']}</a></li>
+			{/foreach}
 		</ul>
-		
+		{/if}
 	</div>
 </div><!-- // end #header -->
 
 <div id="main">
 	<div class="container">
-		{if:count($this->index_slide)}
+		{if:count($slide)}
 		<div id="slideshow">
-			{foreach:items=$this->index_slide}
-			<img src="{webroot:$item[img]}" alt="Slideshow Image" />
+			{foreach:items=$slide}
+			<a href="{$item['url']}" title="{$item['name']}" target="_blank"><img src="{webroot:$item[img]}" alt="{$item['name']}" /></a>
 			{/foreach}
 		</div>
 		{/if}
-		<div class="intro">
-			<p>Dilasag Aurora, More Adventure More Fun!</p>
-		</div><!-- // end .intro -->
-		<div id="about" class="clearfix">
+		{if:count($goods_list)}
+		{foreach:items=$goods_list item=$category_goods}
+		<h1>{$category_goods['cname']}</h1>
+		<div class="row clearfix">
+			{foreach:items=$category_goods item=$goods}
 			<div class="column">
-				<h2>Tourist Spots</h2>
-				<div class="image"><img src="images/article/article-thumb-1.jpg" alt="Article Image" /></div>
-				<p>Canawer one of the best outdoor destinations in Dilasag decorated with fine white sand, colorful coral reefs and diverse marine life.</p>
+				<div class="image">
+					<a href="{$goods['url']}" target="_blank">
+						<img src="{$goods['img']}" alt="{$goods['name']}" />
+					</a>
+				</div>
+				<h2><a href="{$goods['url']}" target="_blank">{$goods['name']}</a></h2>
+				<p>{$goods['notes']}</p>
 			</div>
-			<div class="column">
-				<h2>Fresh Seafoods</h2>
-				<div class="image"><img src="images/article/article-thumb-2.jpg" alt="Article Image" /></div>
-				<p>Enjoy the goodness of the sea as we give you the various kind of fresh sea-foods in the perimeter of Dilasag town.</p>
-			</div>
-			<div class="column">
-				<h2>Handy Crafts</h2>
-				<div class="image"><img src="images/article/article-thumb-3.jpg" alt="Article Image" /></div>
-				<p>Well-polished handy crafts from various raw materials will give you a totally unique style and design.</p>
-			</div>
-			<div class="column last">
-				<h2>Adventures</h2>
-				<div class="image"><img src="images/article/article-thumb-4.jpg" alt="Article Image" /></div>
-				<p>Adventures are few steps from the town proper. Surfing, biking and scuba diving are the most exciting adventures you can have in Dilasag.</p>
-			</div>
-		</div><!-- // end #articles -->
+			{/foreach}
+		</div>
+		{/foreach}
+		{/if}
 	</div>
 </div><!-- // end #main -->
 
