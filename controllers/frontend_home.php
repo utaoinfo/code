@@ -43,7 +43,7 @@ class Frontend_home extends IController
 		$categoryObj = new IModel('category');
 
 		// 获取前四个分类
-		$sql  = "SELECT id,name FROM {$this->tablePre}category WHERE parent_id IN (SELECT id FROM {$this->tablePre}category WHERE parent_id=0 ) ORDER BY sort DESC LIMIT 6 ";
+		$sql  = "SELECT id,name FROM {$this->tablePre}category WHERE parent_id IN (SELECT id FROM {$this->tablePre}category WHERE parent_id=0 ) ORDER BY sort DESC LIMIT 4 ";
 		$categories =  $categoryObj->query_sql($sql);
 		$goods_list = array();
 //print_r($categories);exit();
@@ -58,12 +58,12 @@ class Frontend_home extends IController
 				$goods =  $categoryObj->query_sql($sql);
 				if(count($goods)>0){
 					$goods_list[$value['id']] = $goods;
-					$goods['cname'] = $value['name'];
+					$goods_list[$value['id']]['cname'] = $value['name'];
 				}
 			}
 		}
-//print_r($goods_list);exit();
 
+//print_r($goods_list);exit();
 		$data['title'] = isset($site_config['index_seo_title'])? $site_config['index_seo_title']:'';
 		$data['description'] = isset($site_config['index_seo_description'])? $site_config['index_seo_description']:'';
 		$data['keywords'] = isset($site_config['index_seo_keywords'])? $site_config['index_seo_keywords']:'';

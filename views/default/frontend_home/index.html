@@ -50,7 +50,8 @@
 		<h1>{$category_goods['cname']}</h1>
 		<div class="row clearfix">
 			{foreach:items=$category_goods item=$goods}
-			<div class="column">
+			{if:$key!=='cname'}
+			<div class="column" {$key} {if:$key==3}style="margin-right:0;"{/if}>
 				<div class="image">
 					<a href="{$goods['url']}" title="{$goods['name']}" target="_blank">
 						<img src="{$goods['img']}" alt="{$goods['name']}" />
@@ -59,6 +60,7 @@
 				<h2><a href="{$goods['url']}" title="{$goods['name']}" target="_blank">{$goods['name']}</a></h2>
 				<p>{$goods['notes']}</p>
 			</div>
+			{/if}
 			{/foreach}
 		</div>
 		{/foreach}
