@@ -5,8 +5,6 @@
 		<li class='selected'><a href="javascript:select_tab('base_conf');">基本设置</a></li>
 		<li><a href="javascript:select_tab('guide_conf');">导航设置</a></li>
 		<li><a href="javascript:select_tab('index_slide');">首页幻灯设置</a></li>
-		<li><a href="javascript:select_tab('site_footer_conf');">站点底部信息</a></li>
-		<li><a href="javascript:select_tab('shopping_conf');">购物设置</a></li>
 		<li><a href="javascript:select_tab('show_conf');">显示设置</a></li>
 		<li><a href="javascript:select_tab('image_conf');">图片设置</a></li>
 		<li><a href="javascript:select_tab('mail_conf');">邮箱设置</a></li>
@@ -225,59 +223,7 @@
 			</table>
 		</form>
 
-		<form action='{url:/system/save_conf/form_index/site_footer_conf}' method='post' name='site_footer_conf'>
 
-			<table class='form_table'>
-				<col width="150px" />
-				<col />
-				<tr>
-					<th>站点底部信息：</th>
-					<td>
-						<textarea id="site_footer_code" name='site_footer_code' style='width:95%;height:300px;' >{$this->confRow['site_footer_code']}</textarea>
-						<label>设置站点底部页面信息，您可以点源代码试图直接进行代码编辑</label>
-					</td>
-					<script language="javascript">
-					//装载编辑器
-					KE.show({
-						id : 'site_footer_code',
-						cssPath:'{skin:css/index.css}',
-						imageUploadJson:'{url:/block/upload_img_from_editor}'
-					});
-					</script>
-				</tr>
-				<tr>
-					<th></th>
-					<td><button type='submit' class='submit'><span>保存站点底部信息</span></button></td>
-				</tr>
-			</table>
-
-		</form>
-
-		<form action='{url:/system/save_conf/form_index/shopping_conf}' method='post' name='shopping_conf'>
-			<!--购物设置!-->
-			<table class="form_table">
-				<col width="150px" />
-				<col />
-				<tr>
-					<th>税率：</th>
-					<td><input type='text' name='tax' class='small' empty pattern='float' alt='请输入正确的整数或者浮点数' />%</td>
-				</tr>
-				<tr>
-					<th>默认备货时间：</th>
-					<td><input type='text' class='small' name='stockup_time' pattern='int' alt='请填写整数' />天 <label>* 订单确认后需要备货的时间</label></td>
-				</tr>
-				<tr>
-					<th>团购过期时间：</th>
-					<td><input type='text' class='small' name='regiment_time_limit' pattern='int' alt='请填写整数' />分钟 <label>* 报名参加团购后多长时间不付款则视为过期，默认为60分钟</label></td>
-				</tr>
-				<tr>
-					<th></th>
-					<td>
-						<button class="submit" type='submit'><span>保存购物配置</span></button>
-					</td>
-				</tr>
-			</table>
-		</form>
 		<form action='{url:/system/save_conf/form_index/show_conf}' method='post' name='show_conf'>
 			<!--显示设置!-->
 			<table class="form_table">

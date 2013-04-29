@@ -29,13 +29,7 @@ class Menu
 					'/goods/category_edit'	=>	'添加分类'
 				),
 				'品牌'=>array(
-					'/brand/category_list'		=>	'品牌分类',
 					'/brand/brand_list'		=>	'品牌列表'
-				),
-				'模型'=>array(
-					'/goods/model_list'=>'模型列表',
-					'/goods/spec_list'=>'规格列表',
-					'/goods/spec_photo'=>'规格图库'
 				),
 				'搜索'=>array(
 					'/tools/keyword_list' => '关键词列表',
@@ -46,16 +40,12 @@ class Menu
 		'会员'=>array(
 				'会员管理'=>array(
             		'/member/member_list' => '会员列表',
-             	'/member/group_list' => '会员组列表',
-             	'/member/withdraw_list'=>'会员提现管理'
+             		'/member/group_list' => '会员组列表'
 				),
 				'信息处理' => array(
 					'/comment/suggestion_list'  => '建议管理',
-					'/comment/refer_list'		=> '咨询管理',
-					'/comment/discussion_list'	=> '讨论管理',
 					'/comment/comment_list'		=> '评价管理',
 					'/comment/message_list'		=> '站内消息',
-					'/message/notify_list'	=>	'到货通知',
 				),
 				'邮件短信设置'=>array(
 					'/message/tpl_list'		=>	'模板管理',
@@ -63,78 +53,21 @@ class Menu
 				)
 		),
 
-	   '订单'=>array(
-            	'订单管理'=>array(
-	                '/order/order_list' => '订单列表',
-	                '/order/order_add'  => '添加订单'
-            	),
-            	'单据管理'=>array(
-	             	'/order/order_collection_list'  => '收款单',
-	             	'/order/order_refundment_list'  => '退款单',
-	        		'/order/order_delivery_list'    => '配货单',
-	        		'/order/order_returns_list'     => '退货单',
-	        		'/order/refundment_list'        => '退款申请列表',
-            	),
-            	'发货信息'=>array(
-            		'/order/ship_info_list'         => '发货信息管理',
-            	),
-		),
-
-		'营销'=>array(
-            	'促销活动' => array(
-            		'/market/pro_rule_list' => '促销活动列表'
-            	),
-            	'营销活动' => array(
-            		'/market/pro_speed_list' => '限时抢购',
-            		'/market/regiment_list' => '团购',
-            	),
-            	'代金券管理'=>array(
-            		'/market/ticket_list'       => '代金券列表',
-            		'/market/ticket_excel_list' => '代金券文件列表',
-            	)
-		),
-
-		'统计'=>array(
-				'基础数据统计'=>array(
-          		'/market/user_reg' 	   => '用户注册统计',
-				'/market/spanding_avg' => '人均消费统计',
-          		'/market/amount'       => '销售金额统计'
-				),
-				'日志操作记录'=>array(
-				'/market/account_list'   => '资金操作记录',
-				'/market/operation_list' => '后台操作记录',
-				)
-		),
-
-
         '系统'=>array(
         		'后台首页'=>array(
         			'/system/default' => '后台首页',
         		),
             	'网站管理'=>array(
             		'/system/conf_base' => '网站设置',
-            		'/system/conf_ui'   => '主题设置',
-            	),
-            	'支付管理'=>array(
-                '/system/payment_list' => '支付方式'
             	),
             	'多平台登录'=>array(
                 '/system/oauth_list' => '平台列表'
-            	),
-            	'配送管理'=>array(
-                '/system/delivery'  	=> '配送方式',
-                '/system/area'  		=> '地区管理',
-            	'/system/freight_list'	=> '物流公司',
-            	'/system/express'		=> '快递跟踪'
             	),
             	'权限管理'=>array(
             		'/system/admin_list' => '管理员',
             		'/system/role_list'  => '角色',
             		'/system/right_list' => '权限资源'
-            	),
-				'系统升级'=>array(
-					'/system/upgrade_1'=>'系统升级'
-				)
+            	)
 		),
 
        '工具'=>array(
@@ -170,28 +103,13 @@ class Menu
 	private static $menu_non_display = array(
 		'/tools/article_edit_act'=>'/tools/article_list',
 		'/message/notify_filter' =>'/message/notify_list',
-		'/market/ticket_edit' => '/market/ticket_list',
-		'/order/collection_show' => '/order/order_collection_list',
-		'/order/refundment_show' => '/order/order_refundment_list',
-		'/order/delivery_show' => '/order/order_delivery_list',
-		'/order/returns_show' => '/order/order_returns_list',
-		'/order/refundment_doc_show' => '/order/refundment_list',
 		'/system/navigation' => '/system/conf_none_exists',
 		'/system/navigation_edit' => '/system/conf_none_exists',
 		'/system/navigation_recycle' => '/system/conf_none_exists',
-		'/order/print_template' => '/order/order_list_non_exists',
-		'/system/area_edit' => '/system/area',
-		'/system/delivery_edit' => '/system/delivery',
-		'/system/delivery_recycle' => '/system/delivery',
 		'/member/recycling' => '/member/member_list',
-		'/order/collection_recycle_list' => '/order/order_collection_list',
-		'/order/delivery_recycle_list' => '/order/order_delivery_list',
-		'/order/returns_recycle_list'	=>	'/order/order_returns_list',
-		'/order/recycle_list'	=>	'/order/ship_info_list',
 		'/system/navigation' => '/system/default',
 		'/system/navigation_edit' => '/system/default',
 		'/system/navigation_recycle' => '/system/default',
-		'/order/expresswaybill_edit' => '/order/order_list_non_exists',
 	);
 
     /**

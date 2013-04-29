@@ -1,28 +1,3 @@
-//关闭product购物车弹出的div
-function closeCartDiv()
-{
-	$('#product_myCart').hide('slow');
-	$('.submit_join').attr('disabled','');
-}
-
-//商品移除购物车
-function removeCart(urlVal,goods_id,type)
-{
-	var goods_id = parseInt(goods_id);
-
-	$.getJSON(urlVal,{goods_id:goods_id,type:type},function(content){
-		if(content.isError == false)
-		{
-			$('[name="mycart_count"]').html(content.data['count']);
-			$('[name="mycart_sum"]').html(content.data['sum']);
-		}
-		else
-		{
-			alert(content.message);
-		}
-	});
-}
-
 //添加收藏夹
 function favorite_add_ajax(urlVal,goods_id,obj)
 {
@@ -38,33 +13,6 @@ function favorite_add_ajax(urlVal,goods_id,obj)
 	});
 }
 
-//寄存购物车[ajax]
-function deposit_ajax(urlVal)
-{
-	$.getJSON(urlVal,{is_ajax:'1'},function(content){
-		if(content.isError == false)
-		{
-			alert(content.message);
-		}
-		else
-		{
-			alert(content.message);
-		}
-	});
-}
-
-//购物车展示
-function showCart(urlVal)
-{
-	$.get(urlVal,{sign:Math.random()},function(content)
-	{
-		if($.trim(content) != '')
-		{
-			$('#div_mycart').html(content);
-			$('#div_mycart').show();
-		}
-	});
-}
 
 //自动完成
 function autoComplete(ajaxUrl,linkUrl,minLimit)

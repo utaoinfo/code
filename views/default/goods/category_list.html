@@ -8,13 +8,11 @@
 		<col width="100px" />
 		<col width="250px" />
 		<col width="100px" />
-		<col width="100px" />
 		<col />
 			<thead>
 				<tr id="headth">
 					<th>排序</th>
 					<th>分类名称</th>
-					<th>模型</th>
 					<th class="t_c">首页显示</th>
 					<th>操作</th>
 				</tr>
@@ -30,7 +28,6 @@
 			<tr id="{$item['id']}" parent={$item['parent_id']}>
 				<td><input class="tiny" id="s{$item['id']}" size="2" type="text" onblur="toSort({$item['id']});" value="{$item['sort']}" /></td>
 				<td class="switch" style='padding-left:{echo:$item['floor']*20}px'><img class="operator" src="{skin:images/admin/close.gif}" alt="关闭" />{$item['name']}</td>
-				<td>{$models[$item['model_id']]}</td>
 				<td class="t_c">{if:$item['visibility']=='1'}<span class="green">是</span>{else:}<span class="brown">否</span>{/if}</td>
 				<td>
 					<a href="{url:/goods/category_edit/cid/$item[id]}"><img class="operator" src="{skin:images/admin/icon_edit.gif}" alt="修改" title="修改" /></a>

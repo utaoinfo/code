@@ -93,124 +93,7 @@ class Goods extends IController
 		}
 		echo $flag;
 	}
-    /**
-	 * @brief 商品模型添加/修改
-	 */
-    public function model_update()
-    {
-    	//数据过滤在class/model.php里，不在控制器里过滤
-
-    	// 获取POST数据
-    	$attribute = IReq::get("attr");
-    	$spec = IReq::get("spec");
-    	$model_name = IReq::get("model_name");
-    	$model_id = IReq::get("model_id");
-
-    	//初始化Model类对象
-		$modelObj = new Model();
-
-    	//校验数据
-    	if(!IValidate::required($model_name))
-    	{
-    		//处理post数据，渲染到前台
-    		$result = $modelObj->postArrayChange($attribute,$spec);
-			$this->data = array('id'=>$model_id,'name'=>$model_name,
-								'model_attr'=>$result['model_attr'],
-								'model_spec'=>$result['model_spec']);
-    		$this->setRenderData($this->data);
-			$this->redirect('model_edit',false);
-			Util::showMessage('模型名称不能为空！');
-			exit();
-    	}
-
-		//更新模型数据
-		$result = $modelObj->model_update($model_id,$model_name,$attribute,$spec);
-		if($result)
-		{
-			$this->redirect('model_list');
-		}
-		else
-		{
-			//处理post数据，渲染到前台
-    		$result = $modelObj->postArrayChange($attribute,$spec);
-			$this->data = array('id'=>$model_id,'name'=>$model_name,
-								'model_attr'=>$result['model_attr'],
-								'model_spec'=>$result['model_spec']);
-    		$this->setRenderData($this->data);
-			$this->redirect('model_edit',false);
-		}
-    }
-
-	/**
-	 * @brief 商品模型修改
-	 */
-    public function model_edit()
-    {
-    	// 获取POST数据
-    	$id = intval(IReq::get("id"));
-    	if($id)
-    	{
-    		//初始化Model类对象
-    		$modelObj = new Model();
-    		//获取模型详细信息
-			$model_info = $modelObj->get_model_info($id);
-			//向前台渲染数据
-			$this->setRenderData($model_info);
-    	}
-		$this->redirect('model_edit');
-    }
-
-	/**
-	 * @brief 商品模型删除
-	 */
-    public function model_del()
-    {
-    	// 获取POST数据
-    	$model_id = IReq::get("id");
-    	$ids = IReq::get("model_id");
-    	$result = 0;
-    	if($model_id)
-    	{
-    		$ids = array('0'=>$model_id);
-    	}
-    	if($ids)
-    	{
-	    	foreach($ids as $id)
-	    	{
-		    	if($id)
-		    	{
-		    		//初始化goods_attribute表类对象
-		    		$goods_attrObj = new IModel("goods_attribute");
-		    		//获取商品属性表中的该模型下的数量
-		    		$num = $goods_attrObj->query(" model_id = ".$id," count(*) as num ");
-		    		if($num[0]['num'] > 0)
-		    		{
-		    			$this->redirect('model_list',false);
-		    			Util::showMessage("无法删除此模型，因为此模型下还存在商品");
-		    			exit;
-		    		}
-		    		//初始化Model表类对象
-		    		$modelObj = new IModel("model");
-		    		//删除商品模型
-					$result = $modelObj->del(" id = ".$id);
-					//初始化Model表类对象
-		    		$attributeObj = new IModel("attribute");
-		    		//删除商品模型属性
-					$attributeObj->del(" model_id = ".$id);
-		    	}
-	    	}
-    	}
-
-		$this->redirect('model_list',false);
-		if($result == 0)
-		{
-			Util::showMessage("删除商品模型失败！");
-		}
-		else
-		{
-			Util::showMessage("删除商品模型成功！");
-		}
-    }
+ 
 
 	/**
 	 * @brief 商品添加
@@ -235,155 +118,12 @@ class Goods extends IController
 			}
 			$ids = substr($ids,0,-1);
 		}
+
 		$this->ids = $ids;
 		$this->setRenderData($this->data);
 		$this->redirect('goods_add');
 	}
-	/*
-	 * @brief ajax添加商品初始化模型,产品分类表
-	 * */
-	function model_init()
-	{
-		$id = IFilter::act(IReq::get('cid'),'int');
-		$model_id = '0';
-		//从产品分类表中，查询出对应的model_id
-		if($id)
-		{
-			$tb_category = new IModel('category');
-			$category_info = $tb_category->query('id='.$id);
-			if(count($category_info)>0)
-			{
-				$model_id = $category_info[0]['model_id'];
-			}
-		}
-		echo $model_id;
-	}
-	/*
-	 * @breif ajax添加商品扩展属性
-	 * */
-	function attribute_init()
-	{
-		$id = IFilter::act(IReq::get('mid'),'int');
-		$tb_attribute = new IModel('attribute');
-		$attribute_info = $tb_attribute->query('model_id='.$id);
-		echo JSON::encode($attribute_info);
-	}
-	/*
-	 * @breif 后台添加给商品规格
-	 * */
-	function search_spec()
-	{
-		$data = array();
-		//错误信息提示
-		$data['iden'] = '0';
-		$data['message'] = '当前商品类型没有绑定默认规格,请先添加规格!';
-		$data['mark'] = '0';
 
-		$this->layout = '';
-		//获得model_id的值
-		$mid = IFilter::act(IReq::get('mid'),'int');
-		$mark = IFilter::act(IReq::get('mark'),'int');
-		$goods_id = IFilter::act(IReq::get('goods_id'),'int');
-		$data['mark'] = $mark;
-		$flag = false;
-		//判断用户是否是修改，如果是则显示
-		if($mark==1 && $goods_id!=0)
-		{
-			$tb_goods = new IModel('goods');
-			$goods_info = $tb_goods->query('id='.$goods_id);
-			if(count($goods_info)>0)
-			{
-				$spec_ids = $goods_info[0]['spec_array'];
-				$spec_array = unserialize($spec_ids);
-				if(count($spec_array))
-				{
-					$ids = '';
-					//修改的时候，获得选中的值
-					$select_sp = array();
-					$sp_array = array();
-					$tb_spec = new IModel('spec');
-					for($i=0;$i<count($spec_array);$i++)
-					{
-						$ids .= $spec_array[$i]['id'].',';
-						$spec_info = $tb_spec->query('id ='.$spec_array[$i]['id']);
-						//如果spec中没有相关的值，则将goods表中的数据导入
-						if(count($spec_info)==0)
-						{
-							$sp_array[$i]['id'] = $spec_array[$i]['id'];
-							$sp_array[$i]['name'] = $spec_array[$i]['name'];
-							$value = rtrim($spec_array[$i]['value'],',');
-							$va_arr = explode(',',$value);
-							$sp_array[$i]['value'] = serialize($va_arr);
-							$sp_array[$i]['type'] = $spec_array[$i]['type'];
-							$sp_array[$i]['note'] = $spec_array[$i]['name'];
-							$sp_array[$i]['is_del'] = '0';
-						}
-						else
-						{
-							$sp_array[$i] = $spec_info[0];
-						}
-						//获得选择的值
-						$sele_value = rtrim($spec_array[$i]['value'],',');
-						$sele_arr = explode(',',$sele_value);
-						foreach ($sele_arr as $va)
-						{
-							if(isset($select_sp[ $spec_array[$i]['id']]))
-							{
-								$select_sp[ $spec_array[$i]['id']] .= $spec_array[$i]['id'].','.$va.','.$sp_array[$i]['type'].','.$spec_array[$i]['name'].'|';
-							}
-							else
-							{
-								$select_sp[ $spec_array[$i]['id']] = $spec_array[$i]['id'].','.$va.','.$sp_array[$i]['type'].','.$spec_array[$i]['name'].'|';
-							}
-						}
-					}
-					$data['sele'] = $select_sp;
-					$data['con'] = $sp_array;
-					$arr = explode(',',substr($ids,0,-1));
-					sort($arr);
-					$data['spec_id'] = join($arr,',').',';
-					$data['iden'] = '1';
-				}
-				else
-				{
-					$flag = true;
-				}
-			}
-			else
-			{
-				$flag = true;
-			}
-		}
-
-		if(($mark == 0 || $flag) && $mid!=0)
-		{
-			$tb_model = new IModel('model');
-			$model_info = $tb_model->query('id='.$mid);
-			$spec_ids = $model_info[0]['spec_ids'];
-			if($spec_ids!='')
-			{
-				$mode_spec = array();
-				$mode_spec = unserialize($spec_ids);
-				$ids = '';
-				if(count($mode_spec)>0)
-				{
-					for($i=0;$i<count($mode_spec);$i++)
-					{
-						$ids .= $mode_spec[$i]['id'].',';
-					}
-					$tb_spec = new IModel('spec');
-					$spen_info = $tb_spec->query('id in('.substr($ids,0,-1).')');
-					$data['con'] = $spen_info;
-					$arr = explode(',',substr($ids,0,-1));
-					sort($arr);
-					$data['spec_id'] = join($arr,',').',';
-					$data['iden'] = '1';
-				}
-			}
-		}
-		$this->setRenderData($data);
-		$this->redirect("search_spec");
-	}
 	/**
 	 * @breif 后台添加为每一件商品添加会员价
 	 * */
@@ -469,7 +209,6 @@ class Goods extends IController
 		//获得post的数据
 		$goods_name = IFilter::act(IReq::get('goods_name'));
 		$goods_category = IReq::get('goods_category');
-		$goods_model = IFilter::act(IReq::get('goods_model'),'int');
 		$goods_brand = IFilter::act(IReq::get('goods_brand'),'int');
 		$goods_status = IFilter::act(IReq::get('goods_status'),'int');
 
@@ -479,6 +218,8 @@ class Goods extends IController
 		$goods_commission = IFilter::act(IReq::get('goods_commission'),'float');
 		$goods_url = IFilter::act(IReq::get('goods_url'));
 		$goods_img = IFilter::act(IReq::get('goods_img'));
+		$list_img = IFilter::act(IReq::get('list_img'));
+		$show_img = IFilter::act(IReq::get('small_img'));
 
 		$sell_price = IFilter::act(IReq::get('sell_price'),'float');
 		$market_price = IFilter::act(IReq::get('market_price'),'float');
@@ -550,46 +291,7 @@ class Goods extends IController
 		}elseif($goods_img){
 			$focus_photo = $goods_img;
 		}
-		//规格
-		$spec_va = IReq::get('spec_va');
-		$spec = array();
-		$spec_array = array();
-		if($spec_va)
-		{
-			$arr = explode(';',$spec_va);
-			$i = 0;
-			foreach ($arr as $value)
-			{
-				$brr = explode('|',$value);
-				$j=0;
-				foreach ($brr as $va)
-				{
-					$crr = explode(',',$va);
-					$spec[$i][$j]['id'] = $crr[0];
-					$spec[$i][$j]['name'] = $crr[1];
-					$spec[$i][$j]['type'] = $crr[2];
 
-					//商品规格类型
-					$spec_array[$j]['id'] = $crr[0];
-					if(!isset($spec_array[$j]['value']))
-					{
-						$spec_array[$j]['value'] = $crr[1].',';
-					}
-					else
-					{
-						if(!strpos(',,'.$spec_array[$j]['value'],','.$crr[1].','))
-						{
-							$spec_array[$j]['value'] .=$crr[1].',';
-						}
-					}
-					$spec_array[$j]['type'] = $crr[2];
-					$spec_array[$j]['name'] = $crr[3];
-
-					$j++;
-				}
-				$i++;
-			}
-		}
 
 		/*goods表操作*/
 		$tb_goods = new IModel('goods');
@@ -597,7 +299,6 @@ class Goods extends IController
 			'name' =>$goods_name,
 			'notes'=>$goods_notes,
 			'goods_no'=>$goods_no,
-			'model_id' =>$goods_model,
 			'sell_price' =>$sell_price,
 			'market_price' => $market_price,
 			'cost_price' => $cost_price,
@@ -615,7 +316,6 @@ class Goods extends IController
 			'weight'=>$weight,
 			'unit' =>$store_unit,
 			'sort' => $sort,
-			'spec_array'=>serialize($spec_array),
 			'visit'=>0,
 			'favorite'=>0,
 			'point' =>$point,
@@ -635,11 +335,11 @@ class Goods extends IController
 		}
 		//商品扩展分类
 		$tb_category = new IModel('category_extend');
-		foreach ($goods_category as $va)
+		if ($goods_category)
 		{
 			$tb_category->setData(array(
 				'goods_id'=>$goods_id,
-				'category_id'=>$va
+				'category_id'=>$goods_category 
 			));
 			$tb_category->add();
 		}
@@ -667,64 +367,6 @@ class Goods extends IController
 			}
 		}
 
-		/*goods_attribute表操作*/
-		$tb_goods_attribute = new IModel('goods_attribute');
-		if(count($spec)>0)
-		{
-			//循环保存规格的参数
-			foreach ($spec as $value)
-			{
-				foreach ($value as $va)
-				{
-					$ids = array();
-					$attribute_info = $tb_goods_attribute->query("goods_id = '".$goods_id."' and spec_id='".$va['id']."' and spec_value='".$va['type'].'|'.$va['name']."'");
-					if(count($attribute_info)==0)
-					{
-						$ids['goods_id']=$goods_id;
-						$ids['spec_id']=$va['id'];
-						$ids['spec_value']=$va['type'].'|'.$va['name'];
-						$ids['model_id']=$goods_model;
-						//echo count(ids).'|';
-						$tb_goods_attribute->setData($ids);
-						$tb_goods_attribute->add();
-					}
-				}
-			}
-		}
-		$attribute_ids = IReq::get('attribute_ids');
-		if($attribute_ids)
-		{
-			$att_arr = explode(',',$attribute_ids);
-			//循环保存扩展属性的参数
-			foreach ($att_arr as $value)
-			{
-				$id = $value;
-				$name = IReq::get('attri'.$value) ? IReq::get('attri'.$value) : '';
-				$attr_value = '';
-			 	if($name)
-				{
-					if(is_array($name) && isset($name[0]) && $name[0]!='')
-					{
-						$attr_value = join(',',$name);
-					}
-					else
-					{
-						$attr_value = $name;
-					}
-					$attribute_info = $tb_goods_attribute->query("goods_id = '.$goods_id.' and attribute_id='.$id.' and attribute_value='.$attr_value.'" );
-					if(count($attribute_info)==0)
-					{
-						$tb_goods_attribute->setData(array(
-							'goods_id'=>$goods_id,
-							'attribute_id'=>$id,
-							'attribute_value'=>$attr_value,
-							'model_id'=>$goods_model
-						));
-						$tb_goods_attribute->add();
-					}
-				}
-			}
-		}
 		/*commend_goods表操作*/
 		$goods_commend = IReq::get('goods_commend');
 		$tb_commend = new IModel('commend_goods');
@@ -916,6 +558,8 @@ class Goods extends IController
 		$goods_commission = IFilter::act(IReq::get('goods_commission'),'float');
 		$goods_url = IFilter::act(IReq::get('goods_url'));
 		$goods_img = IFilter::act(IReq::get('goods_img'));
+		$list_img = IFilter::act(IReq::get('list_img'));
+		$show_img = IFilter::act(IReq::get('small_img'));
 
 		$sell_price = IFilter::act(IReq::get('sell_price'),'float');
 		$market_price = IFilter::act(IReq::get('market_price'),'float');
@@ -1068,7 +712,6 @@ class Goods extends IController
 			'name' =>$goods_name,
 			'notes'=>$goods_notes,
 			'goods_no'=>$goods_no,
-			'model_id' =>$goods_model,
 			'sell_price' =>$sell_price,
 			'market_price' => $market_price,
 			'cost_price' => $cost_price,
@@ -1084,7 +727,6 @@ class Goods extends IController
 			'description' =>$seo_description,
 			'weight'=>$weight,
 			'unit' =>$store_unit,
-			'spec_array'=>serialize($spec_array),
 			'point' =>$point,
 			'exp' =>$exp,
 			'sort' => $sort,
@@ -1096,73 +738,15 @@ class Goods extends IController
 		//商品扩展分类
 		$tb_category = new IModel('category_extend');
 		$tb_category->del('goods_id='.$goods_id);
-		foreach ($goods_category as $va)
+		if ($goods_category)
 		{
 			$tb_category->setData(array(
 				'goods_id'=>$goods_id,
-				'category_id'=>$va
+				'category_id'=>$goods_category 
 			));
 			$tb_category->add();
 		}
-		/*goods_attribute表操作*/
-		$tb_goods_attribute = new IModel('goods_attribute');
-		$tb_goods_attribute->del('goods_id='.$goods_id);
-		if(count($spec)>0)
-		{
-			//循环保存规格的参数
-			foreach ($spec as $value)
-			{
-				foreach ($value as $va)
-				{
-					$ids = array();
-					$attribute_info = $tb_goods_attribute->query("goods_id = '".$goods_id."' and spec_id='".$va['id']."' and spec_value='".$va['type'].'|'.$va['name']."'");
-					if(count($attribute_info)==0)
-					{
-						$ids['goods_id']=$goods_id;
-						$ids['spec_id']=$va['id'];
-						$ids['spec_value']=$va['type'].'|'.$va['name'];
-						$ids['model_id']=$goods_model;
-						//echo count(ids).'|';
-						$tb_goods_attribute->setData($ids);
-						$tb_goods_attribute->add();
-					}
-				}
-			}
-		}
-		$attribute_ids = IReq::get('attribute_ids');
-		if($attribute_ids)
-		{
-			$att_arr = explode(',',$attribute_ids);
-			//循环保存扩展属性的参数
-			foreach ($att_arr as $value)
-			{
-				$id = $value;
-				$name = IReq::get('attri'.$value) ? IReq::get('attri'.$value) : '';
-				$attr_value = '';
-			 	if($name)
-				{
-					if(is_array($name) && isset($name[0]) && $name[0]!='')
-					{
-						$attr_value = join(',',$name);
-					}
-					else
-					{
-						$attr_value = $name;
-					}
-					$attribute_info = $tb_goods_attribute->query("goods_id = '.$goods_id.' and attribute_id='.$id.' and attribute_value='.$attr_value.'" );
-					if(count($attribute_info)==0)
-					{
-						$tb_goods_attribute->setData(array(
-							'goods_id'=>$goods_id,
-							'attribute_id'=>$id,
-							'attribute_value'=>$attr_value,
-							'model_id'=>$goods_model
-						));
-						$tb_goods_attribute->add();
-					}
-				}
-			}
-		}
+		
 		/*commend_goods表操作*/
 		$goods_commend = IReq::get('goods_commend');
 		$tb_commend = new IModel('commend_goods');
@@ -1686,7 +1270,6 @@ class Goods extends IController
 					'name'		=>	$info['name'],
 					'parent_id'	=>	$info['parent_id'],
 					'sort'		=>	$info['sort'],
-					'model_id'	=>	$info['model_id'],
 					'visibility'=>	$info['visibility'],
 					'keywords'	=>	$info['keywords'],
 					'descript'	=>	$info['descript']
@@ -1699,9 +1282,7 @@ class Goods extends IController
 				return;
 			}
 		}
-		//加载模型
-		$tb_model = new IModel('model');
-		$this->data['models'] = $tb_model->query();
+
 		//加载分类
 		$tb_category = new IModel('category');
 		$goods = new goods_class();
@@ -1720,7 +1301,6 @@ class Goods extends IController
 		$name = IFilter::act(IReq::get('name'));
 		$parent_id = IFilter::act(IReq::get('parent_id'),'int');
 		$visibility = IFilter::act(IReq::get('visibility'),'int');
-		$model = IFilter::act(IReq::get('model'),'int');
 		$sort = IFilter::act(IReq::get('sort'),'int');
 		$title = IFilter::act(IReq::get('title'));
 		$keywords = IFilter::act(IReq::get('keywords'));
@@ -1732,7 +1312,6 @@ class Goods extends IController
 			'parent_id'=>$parent_id,
 			'sort'=>$sort,
 			'visibility'=>$visibility,
-			'model_id'=>$model,
 			'keywords'=>$keywords,
 			'descript'=>$descript,
 			'title'=>$title
@@ -1813,15 +1392,7 @@ class Goods extends IController
 	 */
 	function category_list()
 	{
-		//加载模型
-		$tb_model = new IModel('model');
-		$models = $tb_model->query();
-		$model_info =array();
-		foreach($models as $value)
-		{
-			$model_info[$value['id']] = $value['name'];
-		}
-		$this->data['models'] = $model_info;
+
 		//加载分类
 		$tb_category = new IModel('category');
 		$goods = new goods_class();
@@ -1830,240 +1401,6 @@ class Goods extends IController
 		$this->redirect('category_list',false);
 	}
 
-	//修改页面
-	function spec_edit()
-	{
-		if($id = IReq::get('id'))
-		{
-			$where = 'id = '.$id;
-			$obj = new IModel('spec');
-			$dataRow = $obj->getObj($where);
-			if(count($dataRow)==0)
-			{
-				$dataRow = array(
-				'id'   => null,
-				'name' => null,
-				'type' => null,
-				'value'=> null,
-				'note' => null,
-				);
-			}
-		}
-		else
-		{
-			$dataRow = array(
-				'id'   => null,
-				'name' => null,
-				'type' => null,
-				'value'=> null,
-				'note' => null,
-			);
-		}
-		$this->setRenderData($dataRow);
-		$this->redirect('spec_edit');
-	}
-
-	//增加或者修改规格
-    function spec_update()
-    {
-    	//获取是否为block模块
-    	$isBlock = IReq::get('block','get');
-
-    	//显示方式
-    	$specType = IReq::get('type','post');
-
-    	//规格数据
-    	$valueArray = IReq::get('value','post');
-
-		//要插入的数据
-    	if( is_array($valueArray) && isset($valueArray[0]) && $valueArray[0]!='')
-    	{
-    		$valueArray = array_unique($valueArray);
-    		foreach($valueArray as $key => $rs)
-    		{
-    			if($rs=='')
-    			{
-    				unset($valueArray[$key]);
-    			}
-    		}
-
-			if(!$valueArray)
-			{
-				$isPass = false;
-				$errorMessage = "请上传规格图片";
-			}
-			else
-			{
-				$value = serialize($valueArray);
-			}
-		}
-    	else
-    		$value = '';
-
-    	$editData = array(
-    		'id'    => IReq::get('id','post'),
-    		'name'  => IReq::get('name','post'),
-    		'value' => $value,
-    		'type'  => IReq::get('type','post'),
-    		'note'  => IReq::get('note','post'),
-    	);
-
-    	//校验
-    	$isPass = true;
-    	if($value=='')
-    	{
-    		$isPass = false;
-    		$errorMessage = '规格值不能为空,请填写规格值或上传规格图片';
-    	}
-
-    	if($editData['name']=='')
-    	{
-    		$isPass = false;
-    		$errorMessage = '规格名称不能为空';
-    	}
-
-    	if($isPass==false)
-    	{
-    		//block部分
-			if($isBlock!==null)
-			{
-				$blockObj = new Block($this->module,'block');
-				$blockObj->setRenderData($editData);
-				$blockObj->redirect('spec_edit',false);
-			}
-			else
-			{
-				$this->setRenderData($editData);
-				$this->redirect('spec_edit',false);
-			}
-			Util::showMessage($errorMessage);
-    	}
-    	else
-    	{
-    		$obj = new IModel('spec');
-
-			//执行操作
-	    	$obj->setData($editData);
-	    	if($id = IReq::get('id'))
-	    	{
-	    		$where = 'id = '.$id;
-	    		$result = $obj->update($where);
-	    	}
-	    	else
-	    		$result = $obj->add();
-
-			//执行状态
-	    	if($result===false)
-	    	{
-	    		//block部分
-	    		if($isBlock!==null)
-	    		{
-					$blockObj = new Block($this->module,'block');
-					$blockObj->setRenderData($editData);
-					$blockObj->redirect('spec_edit',false);
-	    		}
-	    		else
-	    		{
-		    		$this->setRenderData($editData);
-		    		$this->redirect('spec_edit');
-	    		}
-	    	}
-	    	else
-	    	{
-	    		//block部分
-	    		if($isBlock!==null)
-	    			echo '<script>parent.closeSpec();</script>';
-
-	    		else
-	    			$this->redirect('spec_list');
-	    	}
-
-    	}
-    }
-
-	//批量删除规格
-    function spec_del()
-    {
-    	$id = IReq::get('id');
-		if(!empty($id))
-		{
-			$obj = new IModel('spec');
-			$obj->setData(array('is_del'=>1));
-			$obj->update(Order_Class::getWhere($id));
-			$this->redirect('spec_list');
-		}
-		else
-		{
-			$this->redirect('spec_list',false);
-			Util::showMessage('请选择要删除的规格');
-		}
-    }
-	//彻底批量删除规格
-    function spec_recycle_del()
-    {
-    	$id = IReq::get('id');
-		if(!empty($id))
-		{
-			$obj = new IModel('spec');
-			$obj->del(Order_Class::getWhere($id));
-			$this->redirect('spec_recycle_list');
-		}
-		else
-		{
-			$this->redirect('spec_recycle_list',false);
-			Util::showMessage('请选择要删除的广告位');
-		}
-    }
-	//批量还原规格
-    function spec_recycle_restore()
-    {
-    	$id = IReq::get('id');
-		if(!empty($id))
-		{
-			$obj = new IModel('spec');
-			$obj->setData(array('is_del'=>0));
-			$obj->update(Order_Class::getWhere($id));
-			$this->redirect('spec_recycle_list');
-		}
-		else
-		{
-			$this->redirect('spec_recycle_list',false);
-			Util::showMessage('请选择要还原的广告位');
-		}
-    }
-    //规格图片删除
-    function spec_photo_del()
-    {
-    	$id = IReq::get('id','post');
-    	if(isset($id[0]) && $id[0]!='')
-    	{
-    		$obj = new IModel('spec_photo');
-    		$id_str = '';
-    		foreach($id as $rs)
-    		{
-    			if($id_str!='')
-    			{
-    				$id_str.=',';
-    			}
-    				$id_str.=$rs;
-
-    			$photoRow = $obj->getObj('id = '.$rs,'address');
-    			if(file_exists($photoRow['address']))
-    			{
-    				unlink($photoRow['address']);
-    			}
-    		}
-
-	    	$where = ' id in ('.$id_str.')';
-	    	$obj->del($where);
-	    	$this->redirect('spec_photo');
-    	}
-    	else
-    	{
-    		$this->redirect('spec_photo',false);
-    		Util::showMessage('请选择要删除的id值');
-    	}
-    }
 
 	/**
 	 * @brief 分类排序

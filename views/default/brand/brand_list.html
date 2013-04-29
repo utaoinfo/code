@@ -8,7 +8,6 @@
 			<table class="list_table">
 				<col width="100px" />
 				<col width="150px" />
-				<col width="200px" />
 				<col />
 				<col width="150px" />
 				<thead>
@@ -16,7 +15,6 @@
 						<th>排序</th>
 						<th>品牌名称</th>
 						<th>网址</th>
-						<th>品牌分类</th>
 						<th>操作</th>
 					</tr>
 				</thead>
@@ -33,21 +31,13 @@
 		<col />
 		<col width="150px" />
 		<tbody>
-			{set:$catAll = array()}
-			{query: name = brand_category}
-				{set:$catAll[$item['id']] = $item['name']}
-			{/query}
 
 			{query: name=brand order=sort asc}
 			<tr>
 				<td><input class="tiny" id="sort{$item['id']}" type="text" onblur="toSort({$item['id']});" value="{$item['sort']}" pattern='int' /></td>
 				<td>{$item['name']}</td>
 				<td>{$item['url']}</td>
-				<td>
-				{foreach:items = explode(',',$item['category_ids']) item = $val}
-				{$catAll[$val]} &nbsp;
-				{/foreach}
-				</td>
+
 				<td><a href="{url:/brand/brand_edit/bid/$item[id]}"><img class="operator" src="{skin:images/admin/icon_edit.gif}" alt="修改" /></a><a href="javascript:void(0)" onclick="delModel({link:'{url:/brand/brand_del/bid/$item[id]}'})"><img class="operator" src="{skin:images/admin/icon_del.gif}" alt="删除" /></a></td>
 			</tr>
 			{/query}

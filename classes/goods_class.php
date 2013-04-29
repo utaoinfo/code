@@ -72,7 +72,6 @@ class goods_class
 			'goods_name'	=>	$goods_info['name'],
 			'notes'			=>	$goods_info['notes'],
 			'goods_no'		=>	$goods_info['goods_no'],
-			'goods_model'	=>	$goods_info['model_id'],
 			'brand_id'		=>	$goods_info['brand_id'],
 			'is_del'        =>  $goods_info['is_del'],
 			'from'       	=>  $goods_info['from'],
@@ -80,6 +79,8 @@ class goods_class
 			'commission'    =>  $goods_info['commission'],
 			'url'        	=>  $goods_info['url'],
 			'img'        	=>  $goods_info['img'],
+			'list_img'      =>  $goods_info['list_img'],
+			'small_img'    	=>  $goods_info['small_img'],
 			'up_time'		=>	$goods_info['up_time'],
 			'down_time'		=>	$goods_info['down_time'],
 			'sell_price'	=>	$goods_info['sell_price'],
@@ -95,7 +96,6 @@ class goods_class
 			'seo_description'=> $goods_info['description'],
 			'sort'			=>  $goods_info['sort'],
 			'exp'			=>  $goods_info['exp'],
-			'spec_array'	=>	$goods_info['spec_array'],
 			'keywords_for_search' =>array()
 		);
 
@@ -133,30 +133,7 @@ class goods_class
 		//加载分类
 		$tb_category = new IModel('category');
 		$data['category'] = $this->sortdata($tb_category->query(false,'*','sort','asc'),0,' &nbsp;&nbsp; ');
-		//所有扩展属性
-		$tb_attribute = new IModel('attribute');
-		$attribute_info = $tb_attribute->query('model_id='.$data['form']['goods_model']);
-		$data['attribute'] = $attribute_info;
-		$data['attribute_ids'] = '';
-		if(count($attribute_info)>0){
-			foreach ($attribute_info as $value)
-			{
-				$data['attribute_ids'] .= $value['id'].',';
-			}
-			$data['attribute_ids'] = substr($data['attribute_ids'],0,-1);
-		}
-		//goods_attribute
-		$tb_goods_attribute = new IQuery('goods_attribute');
-		$tb_goods_attribute->fields = 'attribute_id,attribute_value';
-		$tb_goods_attribute->where = "goods_id=".$type['gid']." and attribute_id!=''";
-		$goods_attribute = $tb_goods_attribute->find();
-		$data['goods_attribute'] = ',';
-		if(count($goods_attribute)>0){
-			foreach ($goods_attribute as $value)
-			{
-				$data['goods_attribute'] .= $value['attribute_id'].'|'.$value['attribute_value'].',';
-			}
-		}
+
 		//相册
 		$tb_goods_photo = new IQuery('goods_photo_relation as ghr');
 		$tb_goods_photo->join = 'left join goods_photo as gh on ghr.photo_id=gh.id';
@@ -180,22 +157,7 @@ class goods_class
 		$show_thumb_width  = isset($config_info['show_thumb_width'])  ? $config_info['show_thumb_width']  : 85;
 		$show_thumb_height = isset($config_info['show_thumb_height']) ? $config_info['show_thumb_height'] : 85;
 	 	$data['show_attr'] = '_'.$show_thumb_width.'_'.$show_thumb_height;
-		//规格属性
-		$tb_spec_attr = new IQuery('goods_attribute as ga');
-		$tb_spec_attr->fields = 'ga.spec_id';
-		$tb_spec_attr->group = 'spec_id';
-		$tb_spec_attr->where = "goods_id=".$type['gid']." and ga.spec_id!=''";
-		$spec_attr_info = $tb_spec_attr->find();
-		$data['spec_attr'] = count($spec_attr_info);
-		$data['spec_id'] = '';
-		if(count($spec_attr_info)>0)
-		{
-			foreach ($spec_attr_info as $value)
-			{
-				$data['spec_id'] .= $value['spec_id'].',';
-			}
-			$data['spec_id'] = substr($data['spec_id'],0,-1);
-		}
+
 		//加载会员级别
 		$tb_user_group = new IModel('user_group');
 		$info = $tb_user_group->query();

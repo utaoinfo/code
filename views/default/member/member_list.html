@@ -21,46 +21,9 @@
 		<a href="javascript:void(0)" onclick="remove()"><button class="operating_btn" type="button"><span class="grade">批量编辑</span></button></a>
 		<a href="javascript:;"><button class="operating_btn" type="button" onclick="window.location='{url:/member/recycling/}'"><span class="recycle">回收站</span></button></a>
 		<a href="javascript:void(0)" onclick="filter()"><button class="operating_btn" type="button"><span class="remove">筛选</span></button></a>
-		<a href="javascript:void(0)" onclick="balance_add()"><button class="operating_btn" type="button"><span class="recharge">预付款管理</span></button></a>
-<script type="text/javascript">
-function balance_add()
-{
-	if(checkboxCheck('check[]','请选择要进行预付款操作的用户！'))
-	{
-		art.dialog({
-			id:'balan',
-			title:'预付款管理',
-		    content: '<div class="pop_win clearfix" style="width:400px;padding:5px"><table class="form_table"><col width="120px" /><col /><tr><td class="t_r">请选择：</td><td><select id="typecode" class="middle" onchange="show(this.value)"><option value="1">充值</option><option value="2">退款</option><option value="3">提现</option></select></td></tr><tr id="ord_no" style="display:none;"><td class="t_r">订单号：</td><td><input type="text" id="order_no" maxlength="20" class="middle"/></td></tr><tr><td class="t_r">请输入金额：</td><td><input id="balance" class="small" type="text" maxlength="8"/></td></tr></table></div>',
-		    yesFn: function(){
-		    	var va = $("#typecode").val();
-		    	var order_no = $.trim($('#order_no').val());
-		    	if(va=='2')
-		    	{
-			    	if(order_no=='')
-			    	{
-				    	alert('请输入订单号!');
-				    	return false;
-			    	}
-		    	}
-				var balance = $.trim($('#balance').val());
-				if(balance=='')
-				{
-					alert('请输入金额!');
-					return false;
-				}
-		        //return false; //如果返回false将阻止关闭
-		        var tempUrl = '{url:/member/member_recharge/balance/@balance@/type/@type@/order_no/@order_no@}';
-		        tempUrl     = tempUrl.replace('@balance@',balance);
-		        tempUrl     = tempUrl.replace('@type@',va);
-		        tempUrl     = tempUrl.replace('@order_no@',order_no);
 
-				$("form[name='member_list']").attr('action',tempUrl);
-				formSubmit('member_list')
-		    },
-		    noFn: true //为true等价于function(){}
-		});
-	}
-}
+<script type="text/javascript">
+
 function show(va)
 {
 	if(va=='2')

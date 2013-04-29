@@ -133,90 +133,7 @@
 		obj.className = 'current';
 	}
 
-	function select_mode(va)
-	{
-		var box = document.getElementsByName('goods_category[]');
-		var frist = '0';
-		if(box.length>0)
-		{
-			for (var i=0;i<box.length;i++ ){
-			  if(box[i].checked){
-			    if(frist=='0')
-			    {
-				  frist = box[i].value;
-			    }
-			    if(box[i].value==va)
-			    {
-			    	frist = va;
-			    }
-			  }
-			}
-		}
-		$.get("{url:/goods/model_init}",{'cid':frist}, function(data)
-		{
-			var html = '<option value="0" selected >通用类型 </option>';
-			if(data!='')
-			{
-				{query:name=model}
-				if(data=={$item['id']})
-				{
-					html += '<option value="'+{$item['id']}+'" selected>'+"{$item['name']}"+'</option>';
-				}else{
-					html += '<option value="'+{$item['id']}+'">'+"{$item['name']}"+'</option>';
-				}
-				{/query}
-				$('#goods_model').html(html);
-				//设置默认属性
-				select_attr(data);
-			}
-		});
-	}
-	function select_attr(va)
-	{
-		$.getJSON("{url:/goods/attribute_init}",{'mid':va}, function(json)
-		{
-			var pro_va = '';
-			var attribute_id = '';
-			for(a in json){
-				var attri_vaa = json[a]['value'];
-				var attri_arr = attri_vaa.split(',');
-				var selec = '';
-				if(json[a]['type']==1)
-				{
-					for(var i=0;i<attri_arr.length;i++)
-					{
-						selec += '<label class="attr"><input type="radio" name="attri'+json[a]['id']+'" value="'+attri_arr[i]+'"/>'+attri_arr[i]+'</label>';
-					}
-				}
-				if(json[a]['type']==2)
-				{
-					for(var i=0;i<attri_arr.length;i++)
-					{
-						selec += '<label class="attr"><input type="checkbox" name="attri'+json[a]['id']+'[]" value="'+attri_arr[i]+'"/>'+attri_arr[i]+'</label>';
-					}
-				}
-				if(json[a]['type']==3)
-				{
-					selec = '<select class="auto" name="attri'+json[a]['id']+'">';
-					selec += '<option value="">请选择</option>';
-					for(var i=0;i<attri_arr.length;i++)
-					{
-						selec += '<option value="'+attri_arr[i]+'">'+attri_arr[i]+'</option>';
-					}
-					selec += '</select>';
-				}
-				if(json[a]['type']==4)
-				{
-					selec += '<input type="text" name="attri'+json[a]['id']+'" value="'+json[a]['value']+'"/>';
-				}
-				pro_va += '<tr><th>'+json[a]['name']+'</th><td class="">'+selec+'</td></tr>';
-				attribute_id += json[a]['id']+',';
-			}
-			$('#properties').show();
-			$('#propert_table').html(pro_va);
-			$('#attribute_ids').val(attribute_id.substring(0,attribute_id.length-1));
-		});
-	}
+
 
 	function group(m,n)
 	{
@@ -231,165 +148,8 @@
 	    }
 	    return tem;
 	}
-	//添加规格
-	function selSpec()
-	{
-		//获得销售、成本、市场价格、重量、库存等。
-		var store_nums = $('#store_nums').val();
-		var market_price = $('#market_price').val();
-		var sell_price = $('#sell_price').val();
-		var cost_price = $('#cost_price').val();
-		var weight = $('#weight').val();
 
-		var id = $('#goods_model').val();
-		var tempUrl = '{url:/goods/search_spec/mid/@mid@/mark/0}';
-		tempUrl = tempUrl.replace('@mid@',id);
-		art.dialog.open(tempUrl,{
-			id:'alert_goods',
-			width:'700px',
-			height:'450px',
-		    title: '添加规格值',
-		    yesFn: function(iframeWin, topWin){
-		        // iframeWin: 对话框iframe内容的window对象
-		        // topWin: 对话框所在位置的window对象
-		        var form = iframeWin.document.getElementById('list'),
-		        id = iframeWin.$('#spec_id').val(),
-		        iden = iframeWin.$('#iden').val();
-	            if(id != undefined)
-		        {
-	    	        id = id.substring(0,id.length-1);
-	    	        var arr_id = id.split(',');
-					var arr = new Array();
-					//获得规格的名字
-					var grr = new Array();
-					//拆分字符串，循环得到规格的值
-					var flag = 0;
-					var j=0;
-					for(var i=0;i<arr_id.length;i++){
-						var spec = iframeWin.$('#spec'+arr_id[i]).val();
-						if(spec!='' && spec != undefined){
-							arr[j] = new Array();
-							spec = spec.substring(0,spec.length-1);
-							var brr = spec.split('|');
-							flag =1;
-							arr[j] = brr;
-							//获得规格的名字，存入数组
-							grr[j] = '';
-							if(brr.length>0)
-							{
-								var spec_rr = new Array();
-								spec_rr = brr[0].split(',');
-								grr[j] = spec_rr[3];
-							}
-							j++;
-						}
-					}
-					if(flag==0){
-						alert("请选择规格!");
-				        return false;
-					}
-					//将得到的规格数组进行组合
-					var item = new Array();
-					switch (arr.length)
-					{
-						case 1:item = arr[0];break;
-						case 2:item = group(arr[0],arr[1]);break;
-						default:
-							item = group(arr[0],arr[1]);
-							for(var i=2;i<arr.length;i++){
-								item=group(item,arr[i]);
-							}
-							break;
-					}
-					//生成表头文件
-					var head = '<tr><td>货号</td>';
-					for(var i=0;i<arr.length;i++){
-						if(grr[i]!='')
-						{
-							head+='<td>'+grr[i]+'</td>';
-						}
-						else
-						{
-							head+='<td>规格'+(i+1)+'</td>';
-						}
-					}
-					head+='<td>库存</td><td>市场价格</td><td>销售价格</td><td>成本价格</td><td>重量</td><td>操作</td></tr>';
-					$('#head_table').html(head);
-					//生成html添加到相关位置
-					var html = '';
-					var spec_va = '';
-					for(var i=0;i<item.length;i++){
-						html+='<tr id="tr'+i+'"><td><input type="text" name="goods_no'+i+'" id="goods_no'+i+'" class="middle"/></td>';
-						var crr = item[i].split('|');
-						for(var j=0;j<crr.length;j++){
-							var drr = crr[j].split(',');
-							if(drr[2]==1)
-							{
-								html +='<td>'+drr[1]+'<input type="hidden" name="spec'+i+drr[0]+'" value="'+drr[1]+'"/></td>';
-							}
-							else
-							{
-								html +='<td><img src="{webroot:}'+drr[1]+'" class="img_border" width=\'30px\' height=\'30px\'"/><input type="hidden" name="spec'+i+drr[0]+'" value="'+drr[1]+'"/></td>';
-							}
-						}
-						html +='<td><input type="text" name="store_nums'+i+'" id="store_nums'+i+'" pattern="int" value="'+store_nums+'" class="tiny"/></td>';
-						html +='<td><input type="text" name="market_price'+i+'" id="market_price'+i+'" pattern="float" value="'+market_price+'" empty class="tiny"/></td>';
-						html +='<td><input type="text" name="sell_price'+i+'" id="sell_price'+i+'" pattern="float" value="'+sell_price+'" empty class="tiny"/>&nbsp;&nbsp;<button class="btn" name="goods_spec" type="button" onclick="memPrice('+i+')"><span class="add">会员价格</span></button></td>';
-						html +='<td><input type="text" name="cost_price'+i+'" id="cost_price'+i+'" pattern="float" value="'+cost_price+'" empty class="tiny"/></td>';
-						html +='<td><input type="text" name="weight'+i+'" id="weight'+i+'" pattern="float" value="'+weight+'" empty class="tiny"/></td>';
-						html +='<td><img class="operator" src="{skin:images/admin/icon_del.gif}" onclick="del_tr('+i+')" alt="删除" /></td>';
-						html +='</tr>';
-					}
-					spec_va = item.join(';');
-					/****将获得的规格值展示到页面******/
-					$('#spec_va').val(spec_va);
-					$('#spec_table').html(html);
-			    }
-	            else
-		        {
-	    	        if(iden==0)
-	    	        {
-	    	        	alert("请添加规格!");
-	    		        return false;
-	    	        }
-	            	alert("请选择规格!");
-			        return false;
-			    }
-	            $('#base').hide();//隐藏基本属性
-	            $('#spec_tr').show();//显示规格
-		        form.submit();
-		    }
-		},true);
-	}
-	//删除规格列表中的行
-	function del_tr(num)
-	{
-		//删除数组元素.
-		Array.prototype.remove=function(dx)
-		{
-		    if(isNaN(dx)||dx>this.length){return false;}
-		    for(var i=0,n=0;i<this.length;i++)
-		    {
-		        if(this[i]!=this[dx])
-		        {
-		            this[n++]=this[i]
-		        }
-		    }
-		    this.length-=1
-		}
-		$('#tr'+num).remove();
-		var spec_va = $('#spec_va').val();
-		var arr = spec_va.split(';');
-		arr.remove(num);
-		$('#spec_va').val(arr.join(';'));
-		//判断规格（spec_table）里面是否还有tr，如果没有，则隐藏规格，显示基本数据
-		var tr = $('#spec_table tr').html();
-		if(tr==undefined)
-		{
-			$('#base').show();//显示基本属性
-			$('#spec_tr').hide();//隐藏规格
-		}
-	}
+
 	//会员价格
 	function memPrice(num)
 	{
@@ -518,19 +278,12 @@
 						<td>
 							<ul class="select">
 							{foreach:items=$category item=$value}
-							<li><label><input type="checkbox" value="{$value['id']}" name="goods_category[]" onclick="select_mode(this.value)"/>{$value['name']}</label></li>
+							<li><label><input type="radio" value="{$value['id']}" name="goods_category" />{$value['name']}</label></li>
 							{/foreach}
 							</ul>
 						</td>
 					</tr>
-					<tr>
-						<th>商品模型：</th><td><select class="auto" name="goods_model" id="goods_model" onchange="select_attr(this.value)">
-						<option value="0">通用类型 </option>
-						{query:name=model}
-						<option value="{$item['id']}">{$item['name']}</option>
-						{/query}
-						</select></td>
-					</tr>
+	
 					<tr>
 						<th>商品推荐类型：</th>
 						<td>
@@ -572,12 +325,6 @@
 					<tr>
 						<th>商品页面地址：</th>
 						<td><input class="normal" id="goods_url" name="goods_url" type="text" value="" />
-						</td>
-					</tr>
-					<tr>
-						<th>图片地址：</th>
-						<td>
-							<input class="normal" id="goods_img" name="goods_img" type="text" value="" />
 						</td>
 					</tr>
 					<tr id="affili">
@@ -622,31 +369,28 @@
 							</div>
 						</td>
 					</tr>
+
 					<tr>
-						<th>规格：</th><td><button class="btn" name="goods_spec" type="button" onclick="selSpec()"><span class="add">添加规格</span></button></td>
-					</tr>
-					<tr id="spec_tr" style="display:none;">
-						<th></th>
-						<td><input type="hidden" id="spec_va" name="spec_va" value=""/><input type="hidden" id="member_ids" name="member_ids" value="{$this->ids}"/>
-						<div class="con">
-							<table class="border_table">
-								<thead id="head_table"></thead>
-								<tbody id="spec_table"></tbody>
-							</table>
-							<div id="member_para"></div>
-						</div>
+						<th>小图地址</th>
+						<td>
+							<input class="normal" id="small_img" name="goods_img" type="text" value="" />
 						</td>
 					</tr>
-					<tr id="properties" style="display:none">
-						<th>扩展属性：</th>
-						<td><input type="hidden" name="attribute_ids" id = "attribute_ids" value=""/>
-						<table class="border_table1" id="propert_table">
-						</table>
+					<tr>
+						<th>中图地址：</th>
+						<td>
+							<input class="normal" id="list_img" name="list_img" type="text" value="" />
+						</td>
+					</tr>
+					<tr>
+						<th>大图地址：</th>
+						<td>
+							<input class="normal" id="goods_img" name="goods_img" type="text" value="" />
 						</td>
 					</tr>
 					<tr><input type="hidden" name="photo_name" id="photo_name" value=""/><input type="hidden" name="focus_photo" id="focus_photo" value=""/>
 						<input type="hidden" name="thumb" id="thumb" value=""/>
-						<th>产品相册：</th><td><input class="middle" name="" type="text" /><div class="upload_btn"><span id="upload"></span></div><label>可以上传多张图片。</label></td>
+						<th>产品相册：</th><td><input class="middle" name="" type="text" /><div class="upload_btn"><span id="upload"></span></div><label>可以上传多张图片。上传后，大中小图设置无效</label></td>
 					</tr>
 					<tr>
 						<td></td><td id="show"></td>
@@ -721,7 +465,7 @@
 				return false;
 			}
 		}
-		var box = document.getElementsByName('goods_category[]');
+		var box = document.getElementsByName('goods_category');
 		var first = '0';
 		for (var i=0;i<box.length;i++ ){
 		  if(box[i].checked){

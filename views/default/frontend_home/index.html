@@ -52,11 +52,11 @@
 			{foreach:items=$category_goods item=$goods}
 			<div class="column">
 				<div class="image">
-					<a href="{$goods['url']}" target="_blank">
+					<a href="{$goods['url']}" title="{$goods['name']}" target="_blank">
 						<img src="{$goods['img']}" alt="{$goods['name']}" />
 					</a>
 				</div>
-				<h2><a href="{$goods['url']}" target="_blank">{$goods['name']}</a></h2>
+				<h2><a href="{$goods['url']}" title="{$goods['name']}" target="_blank">{$goods['name']}</a></h2>
 				<p>{$goods['notes']}</p>
 			</div>
 			{/foreach}
@@ -68,14 +68,14 @@
 
 <div id="footer">
 	<div class="container">
+		{if:$guide_list}
 		<ul class="menu fl">
-			<li class="active"><a href="index.html" title="Home">Home</a></li>
-			<li><a href="about.html" title="About">About</a></li>
-			<li><a href="gallery.html" title="Gallery">Gallery</a></li>
-			<li><a href="blog.html" title="Blog">Blog</a></li>
-			<li><a href="contact-us.html" title="Contact Us">Contact Us</a></li>
+			{foreach:items=$guide_list}	
+			<li {if:$key==0}class="active"{/if}><a href="{$item['link']}" title="{$item['name']}">{$item['name']}</a></li>
+			{/foreach}
 		</ul>
-		<p>&copy; dkntemplates 2012 Dilasag | designed by <a href="http://www.dkntemplates.com"> www.dkntemplates.com</a></p>
+		{/if}
+		<p>&copy; utao 2013 </p>
 	</div>
 </div><!-- // end #fppter -->
 	

@@ -41,13 +41,7 @@ class Frontend_home extends IController
 		// 获取各个类型商品前4
 		// 获取二级类
 		$categoryObj = new IModel('category');
-		/*$sql = "SELECT * FROM {$this->tablePre}goods
-				LEFT JOIN {$this->tablePre}category_extend ON {$this->tablePre}goods.id = {$this->tablePre}category_extend.goods_id
-				LEFT JOIN {$this->tablePre}category ON {$this->tablePre}category.id = {$this->tablePre}category_extend.category_id
-				WHERE {$this->tablePre}category.parent_id IN (SELECT id FROM {$this->tablePre}category WHERE {$this->tablePre}category.parent_id=0 ) 
-				ORDER BY {$this->tablePre}category.sort DESC 
-				LIMIT 4";
-		*/
+
 		// 获取前四个分类
 		$sql  = "SELECT id,name FROM {$this->tablePre}category WHERE parent_id IN (SELECT id FROM {$this->tablePre}category WHERE parent_id=0 ) ORDER BY sort DESC LIMIT 6 ";
 		$categories =  $categoryObj->query_sql($sql);
