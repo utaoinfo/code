@@ -429,113 +429,7 @@ class Goods extends IController
 				$tb_group_price->add();
 			}
 		}
-		/*products表的操作*/
-		$tb_goods_attr = new IQuery('goods_attribute');
-		$tb_goods_attr->fields='count(*) as cou,spec_id ';
-		$tb_goods_attr->where="goods_id=".$goods_id." and spec_id!=''";
-		$tb_goods_attr->group='spec_id';
-		$info = $tb_goods_attr->find();
-		if(count($info)>0)
-		{
-			//统计所有的货品数量
-			$store_nums = 0;
-			$spec_ids = '';
-			$num = 1;
-			for ($i=0;$i<count($info);$i++)
-			{
-				$num = $num*$info[$i]['cou'];
-				$spec_ids .= $info[$i]['spec_id'].',';
-			}
-			$spec_ids = substr($spec_ids,0,-1);
-			$tb_products = new IModel('products');
-			$sell_price_array = array();//所有货品的销售价格
-			$market_price_array = array();//所有货品的市场价格
-			$cost_price_array = array();//所有货品的成本价格
-			$weight_array = array();//所有货品的重量
-			$k = 1;
-			for($i=0;$i<$num;$i++)
-			{
-				$arr = explode(',',$spec_ids);
-				$ids = array();
-				$j=0;
-				$flag = 0;
-				$spec_md5 = '';
-				//sort($arr);
-				foreach ($arr as $value)
-				{
-					$ids[$j]['id'] = $value;
-					$ids[$j]['value'] = IReq::get('spec'.$i.$value);
-					$spec_md5 .=md5($ids[$j]['value']).',';
-					if(!empty($ids[$j]['value'])){
-						$flag = 1;
-					}
-					$j++;
-				}
-				$specTemp = explode(',',trim($spec_md5,','));
-				sort($specTemp);
-				$spec_md5 = md5(serialize($specTemp));
-
-				if($flag)
-				{
-					$store_nums += IReq::get('store_nums'.$i);
-					$tb_products->setData(array(
-						'goods_id'=>$goods_id,
-						'products_no'=>IReq::get('goods_no'.$i)?IReq::get('goods_no'.$i):$goods_no.'-'.$k,
-						'spec_array'=>serialize($ids),
-						'store_nums'=>IReq::get('store_nums'.$i),
-						'market_price'=>IReq::get('market_price'.$i)?IReq::get('market_price'.$i):$market_price,
-						'sell_price'=>IReq::get('sell_price'.$i)?IReq::get('sell_price'.$i):$sell_price,
-						'cost_price'=>IReq::get('cost_price'.$i)?IReq::get('cost_price'.$i):$cost_price,
-						'weight'=>IReq::get('weight'.$i)?IReq::get('weight'.$i):$weight,
-						'spec_md5' =>$spec_md5
-					));
-					//获得所有的货品的销售价格、市场价格、成本价格、货品的重量
-					$sell_price_array[] = IReq::get('sell_price'.$i)?IReq::get('sell_price'.$i):$sell_price;
-					$market_price_array[] = IReq::get('market_price'.$i)?IReq::get('market_price'.$i):$market_price;
-					$cost_price_array[] = IReq::get('cost_price'.$i)?IReq::get('cost_price'.$i):$cost_price;
-					$weight_array[] = IReq::get('weight'.$i)?IReq::get('weight'.$i):$weight;
-					$products_id = $tb_products->add();
-					/*针对group_price表的操作*/
-					if(!empty($member_ids)){
-						$brr = explode(',',$member_ids);
-						foreach ($brr as $value)
-						{
-							$price = IReq::get('mem'.$i.$value);
-							if(!empty($price)){
-								$tb_group_price->setData(array(
-									'goods_id'=>$goods_id,
-									'products_id'=>$products_id,
-									'group_id'=>$value,
-									'price'=>$price
-								));
-								$tb_group_price->add();
-							}
-						}
-					}
-				}
-				$k++;
-			}
-			//如果商品的价格为空，则将货品的销售价格、市场价格、成本价格、重量中最低的赋予
-			$addition = array('store_nums'=>$store_nums);
-			if(!empty($sell_price_array))
-			{
-				$addition['sell_price'] = min($sell_price_array);
-			}
-			if(!empty($market_price_array))
-			{
-				$addition['market_price'] = min($market_price_array);
-			}
-			if(!empty($cost_price_array))
-			{
-				$addition['cost_price'] = min($cost_price_array);
-			}
-			if(!empty($weight_array))
-			{
-				$addition['weight'] = min($weight_array);
-			}
-			$tb_goods->setData($addition);
-			$tb_goods->update('id='.$goods_id);
-		}
+		
 
 		$this->redirect("goods_list");
 	}
@@ -1001,7 +895,7 @@ class Goods extends IController
 	    $tb_goods->setData(array('is_del'=>1));
 	    if(!empty($id))
 		{
-			$tb_goods->update(Order_Class::getWhere($id));
+			$tb_goods->update(Util::getWhere($id));
 		}
 		else
 		{
@@ -1031,7 +925,7 @@ class Goods extends IController
 	    $tb_goods->setData($arr);
 	    if(!empty($id))
 		{
-			$tb_goods->update(Order_Class::getWhere($id));
+			$tb_goods->update(Util::getWhere($id));
 		}
 		else
 		{
@@ -1083,7 +977,7 @@ class Goods extends IController
 	    $tb_goods->setData(array('is_del'=>0));
 	    if(!empty($id))
 		{
-			$tb_goods->update(Order_Class::getWhere($id));
+			$tb_goods->update(Util::getWhere($id));
 		}
 		else
 		{

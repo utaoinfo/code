@@ -177,5 +177,22 @@ class Util
 
 		return $where;
 	}
+
+	//判断变量是数组还是单个变量
+	static function getWhere($id)
+	{
+		if(is_array($id) && isset($id[0]) && $id[0]!='')
+		{
+			$id = join(',',$id);
+			$where = ' id in ('.$id.')';
+		}
+		else
+		{
+			$where = 'id = '.$id;
+		}
+		return $where;
+	}
+
+	
 }
 ?>

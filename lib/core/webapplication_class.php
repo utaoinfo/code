@@ -15,7 +15,7 @@
  */
 class IWebApplication extends IApplication
 {
-	private $defaultController = 'frontend_home';
+	private $defaultController = 'frontend';
     public  $controller;
 
     /**

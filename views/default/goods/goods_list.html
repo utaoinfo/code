@@ -61,6 +61,7 @@
 				<col width="100px" />
 				<col width="60px" />
 				<col width="60px" />
+				<col width="60px" />
 				<col width="30px" />
 				<col width="60px" />
 				<col width="80px" />
@@ -72,6 +73,7 @@
 						<th class="t_c">选择</th>
 						<th>商品名称</th>
 						<th >分类</th>
+						<th >佣金</th>
 						<th class="t_c">销售价</th>
 						<th class="t_c">库存</th>
 						<th class="t_c">上架</th>
@@ -91,10 +93,10 @@
 	<table id="list_table" class="list_table">
 		<tbody id="conth">
 			{set:$page= (isset($_GET['page'])&&(intval($_GET['page'])>0))?intval($_GET['page']):1;}
-			{query: name=goods as goods join=left join brand as brand on goods.brand_id eq brand.id $left_join distinct=goods.id fields=goods.id,goods.name,goods.sell_price,goods.store_nums,goods.market_price,goods.weight,brand.name as brand_name,goods.sort,goods.is_del where=$where and (is_del eq 0 or is_del eq 2) order=goods.sort asc,goods.id desc page=$page id=$goods_list}
+			{query: name=goods as goods join=left join brand as brand on goods.brand_id eq brand.id $left_join distinct=goods.id fields=goods.id,goods.name,goods.url,goods.commission,goods.sell_price,goods.store_nums,goods.market_price,goods.weight,brand.name as brand_name,goods.sort,goods.is_del where=$where and (is_del eq 0 or is_del eq 2) order=goods.sort asc,goods.id desc page=$page id=$goods_list}
 			<tr class="flush_left">
 				<td class="t_c"><input name="id[]" type="checkbox" value="{$item['id']}" /></td>
-				<td><a href="{url:/site/products/id/$item[id]}" target="_blank" title="{$item['name']}">{$item['name']}</a></td>
+				<td><a href="{$item['url']}" target="_blank" title="{$item['name']}">{$item['name']}</a></td>
 				<td>
 				{set:$cate= '';}
 				{query:name=category_extend as ce join=left join category as cd on cd.id eq ce.category_id fields=cd.name where=goods_id eq $item[id] item=$va}
@@ -102,6 +104,7 @@
 				{/query}
 				{if:$cate}{echo: substr($cate,0,-1)}{/if}
 				</td>
+				<td class="t_c">{$item['commission']}</td>
 				<td class="t_c">{$item['sell_price']}</td>
 				<td class="t_c">{$item['store_nums']}</td>
 				<td class="t_c">{echo:$item['is_del']==0?'是':'否'}</td>
