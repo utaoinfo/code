@@ -35,10 +35,7 @@ class Frontend extends IController
 	public function index(){
 		$data = array();
 
-		$index_slide = isset($site_config['index_slide'])? unserialize($site_config['index_slide']) :array();
-
-
-
+		$index_slide = isset($this->site_config['index_slide'])? unserialize($this->site_config['index_slide']) :array();
 
 		// 获取各个类型商品前4
 		// 获取二级类
