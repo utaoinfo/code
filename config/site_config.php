@@ -10,7 +10,7 @@
   'list_type' => 'win',
   'list_num' => '9',
   'auto_finish' => '1',
-  'index_slide' => 'a:4:{i:0;a:3:{s:4:"name";s:33:"新设计，新内核，新起点";s:3:"url";s:21:"http://www.jooyea.net";s:3:"img";s:39:"upload/2011/06/07/20110607105300491.png";}i:1;a:3:{s:4:"name";s:18:"开源电子商务";s:3:"url";s:21:"http://www.jooyea.net";s:3:"img";s:39:"upload/2011/06/07/20110607105300463.png";}i:2;a:3:{s:4:"name";s:27:"自由，易于二次开发";s:3:"url";s:21:"http://www.jooyea.net";s:3:"img";s:39:"upload/2011/06/07/20110607105300767.png";}i:3;a:3:{s:4:"name";s:21:"电子商务新起点";s:3:"url";s:22:"http://jwww.jooyea.net";s:3:"img";s:39:"upload/2011/06/07/20110607105300948.png";}}',
+  'index_slide' => 'a:3:{i:0;a:3:{s:4:"name";s:33:"新设计，新内核，新起点";s:3:"url";s:21:"http://www.jooyea.net";s:3:"img";s:39:"upload/2013/05/01/20130501121818800.jpg";}i:1;a:3:{s:4:"name";s:18:"开源电子商务";s:3:"url";s:21:"http://www.jooyea.net";s:3:"img";s:39:"upload/2013/04/30/20130430093745658.jpg";}i:2;a:3:{s:4:"name";s:21:"电子商务新起点";s:3:"url";s:22:"http://jwww.jooyea.net";s:3:"img";s:39:"upload/2013/05/01/20130501121935731.jpg";}}',
   'list_thumb_width' => '175',
   'list_thumb_height' => '175',
   'show_thumb_width' => '100',
@@ -27,8 +27,9 @@
   'tax' => '',
   'stockup_time' => '1',
   'regiment_time_limit' => '60',
-  'index_seo_title' => 'f',
+  'index_seo_title' => '优淘（www.utao.info）一起去找更好的',
   'index_seo_keywords' => 'ggggggg',
   'index_seo_description' => 'hhhhhh',
   'goods_no_pre' => '',
+  'price_range'=>array(0=>0,1=>100,2=>300,3=>500,4=>1000)
 )?>

@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="description" content="{$description}" />
     <meta name="keywords" content="{$keywords}" />
-    <title>{$title}</title>	
+    <title>列表页面</title>	
     <link href="css/style.css" rel="stylesheet" type="text/css" />	
 	<link href="css/nivo-slider.css" rel="stylesheet" type="text/css" />
     <!--[if IE]><link href="css/style-ie.css" rel="stylesheet" type="text/css" /><![endif]-->
@@ -49,9 +49,58 @@
 
 <div class="main">
 	<div class="container">
+		{if:$cname}
+			<h2><b>{$cname}</b></h3>
+		{/if}
+		<div id="catBox" class="catschoose">
+			
+			<ul class="operation_area">
+				<li>
+					{if:$brands && count($brands)}
+					<dl id="brands" class="clearfix">
+						<dt>品牌：</dt>
+						<dd>
+							<dl>
+								<dt><strong><a href="/?controller=frontend&action=glist&cid={$cid}&bid=-1&prid={$prid}" class="active">全部</a></strong></dt>
+								
+								{foreach:items=$brands item=$brand}
+								<dd><a href="/?controller=frontend&action=glist&cid={$cid}&bid={$brand['id']}&prid={$prid}" >{$brand['name']}</a></dd>
+								{/foreach}
+								
+							</dl>
+						</dd>
+					</dl>
+					{/if}
+					{if:$price_range && count($price_range)}
+					<dl id="price" class="clearfix">
+						<dt>价格：</dt>
+						<dd>
+							<dl>
+								<dt><strong><a class="active" href="/?controller=frontend&action=glist&cid={$cid}&bid={$bid}&prid=-1" >全部</a></strong></dt>
+								
+								{foreach:items=$price_range item=$range}
+								
+								{if:$key!=0}
+								{set:$currentRange= $range-1;}
+								<dd><a href="/?controller=frontend&action=glist&cid={$cid}&bid={$bid}&prid={$key}" >{$lastRange}-{$currentRange}</a></dd>
+								{/if}
+								{set:$lastRange=$range}
+								{/foreach}
+							</dl>
+						</dd>
+					</dl>
+					{/if}
+				</li>
+	        </ul>
+		</div>
+
 
 		{if:count($goods_list)}
 		<div  class="row clearfix">
+			<ul class="sort clearfix">	
+				<li class="tabitem"><a href="#" class="on" target="_self">最近上架</a></li>	
+				<li class="tabitem"><a class="active" href="#" target="_self">最受好评</a></li>	
+			</ul>
 			{foreach:items=$goods_list item=$goods}
 			<div class="column" {if:$key%4==3}style="margin-right:0;"{/if}>
 				<div class="image">
@@ -70,7 +119,11 @@
 		</div>
 		{else:}
 		<div style="height:300px;line-height:300px;text-align:center;">
-			该分类下没有任何商品，您可以去 <a href="/" target="_self" title="首页看看"><b>首页看看~</b></a>
+			{if:$prid}
+			该价格范围下没有商品，建议您修改搜索条件</a>
+			{else:}
+			该分类下没有商品，您可以去 <a href="/" target="_self" title="首页看看"><b>首页看看~</b></a>
+			{/if}
 		</div>
 		{/if}
 	</div>
@@ -88,5 +141,8 @@
 <script type="text/javascript">
 $(function(){
 	$('.menu').find('a[href*="cid={$cid}"]').addClass('active');
+	$('#catBox').find('a').removeClass('active');
+	$('#brands').find('a[href*="bid={$bid}"]').addClass('active');
+	$('#price').find('a[href*="prid={$prid}"]').addClass('active');
 });
 </script>

@@ -26,13 +26,14 @@ class Frontend extends IController
 			$this->guide_list = $guide_list;
 		}
 
+		$siteConfigObj = new Config("site_config");
+		$site_config   = $siteConfigObj->getInfo();
+		$this->site_config = $site_config;
+
 	}
 
 	public function index(){
 		$data = array();
-		$siteConfigObj = new Config("site_config");
-		$site_config   = $siteConfigObj->getInfo();
-		$this->site_config = $site_config;
 
 		$index_slide = isset($site_config['index_slide'])? unserialize($site_config['index_slide']) :array();
 
@@ -84,28 +85,68 @@ class Frontend extends IController
 		$data = array();
 		$goods_list = array();
 		$cid = IFilter::act(IReq::get('cid'),'int');
-		//echo $cid;exit();
+		$bid = IFilter::act(IReq::get('bid'),'int');
+		$prid = IFilter::act(IReq::get('prid'),'int');
+
 		$page = IFilter::act(IReq::get('page'),'int');
-		$pagesize = 9;
+		$pagesize = $this->site_config['list_num'];
 		$start = $page*$pagesize;
 		$end = ($page+1)*$pagesize;
+		$brands = array();
 		if($cid){
+			$where = "{$this->tablePre}category.id={$cid} AND  {$this->tablePre}goods.is_del=0";
+			if($bid>0){
+				$where .= " AND {$this->tablePre}goods.brand_id={$bid}";
+			}
+			if($prid>0){
+				$where .= " AND {$this->tablePre}goods.sell_price>=".$this->site_config['price_range'][$prid-1] ." AND  {$this->tablePre}goods.sell_price<=".$this->site_config['price_range'][$prid];
+			}
+
 			$categoryObj = new IModel('category');
-			$sql = "SELECT DISTINCT({$this->tablePre}goods.id),{$this->tablePre}goods.*,{$this->tablePre}category.name as cname FROM {$this->tablePre}goods
+			$sql = "SELECT DISTINCT({$this->tablePre}goods.id),{$this->tablePre}goods.*,{$this->tablePre}category.name as cname,{$this->tablePre}category.id as cid FROM {$this->tablePre}goods
 					LEFT JOIN {$this->tablePre}category_extend ON {$this->tablePre}category_extend.goods_id={$this->tablePre}goods.id
 					LEFT JOIN {$this->tablePre}category ON {$this->tablePre}category.id={$this->tablePre}category_extend.category_id
-					WHERE {$this->tablePre}category.id={$cid} AND  {$this->tablePre}goods.is_del=0
+					WHERE {$where}
 					ORDER BY {$this->tablePre}goods.sort ASC
 					LIMIT $start,$end ";
 			$goods_list =  $categoryObj->query_sql($sql);
-		}
+
+			// 获取品牌id
+			if($cid){
+				$bids = array();
+				$sql = "SELECT DISTINCT({$this->tablePre}goods.brand_id), {$this->tablePre}category.* FROM {$this->tablePre}goods
+					LEFT JOIN {$this->tablePre}category_extend ON {$this->tablePre}category_extend.goods_id={$this->tablePre}goods.id
+					LEFT JOIN {$this->tablePre}category ON {$this->tablePre}category.id={$this->tablePre}category_extend.category_id
+					WHERE {$this->tablePre}category.id={$cid} AND  {$this->tablePre}goods.is_del=0 ";
+					$brand_ids =  $categoryObj->query_sql($sql);
+
+				foreach($brand_ids as $key=>$value){
+					if($value['brand_id']){
+						array_push($bids, $value['brand_id']);
+					}
+				}	
+				// 获取所有品牌
+				if(count($bids)>0){
+					$bids_string = implode(',',$bids);
+					$sql = "SELECT * FROM {$this->tablePre}brand WHERE id IN($bids_string) ";
+					$brands =  $categoryObj->query_sql($sql);
+				}
+				
+				
+			}
 			
+		}
+		
 
 		$data['goods_list'] = $goods_list;
-		$data['cid'] = $cid;
-		$data['cname'] = count($goods_list)>0?$goods_list[0]['cname'] : '';
+		$data['cid'] = $cid>0? $cid: -1;
+		$data['bid'] = $bid>0? $bid: -1;
+		$data['prid'] = $prid>0? $prid: -1;
+		$data['cname'] = count($goods_list)>0 ? $goods_list[0]['cname'] : '';
+		$data['brands'] = count($brands)>0 ? $brands : '';
+		$data['price_range']  = count($this->site_config['price_range'])>0 ? $this->site_config['price_range'] : '';
 		$data['page'] = $page;
-		
+	
 		$this->setRenderData($data);
 		$this->redirect('glist');
 	}

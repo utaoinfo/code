@@ -6,13 +6,15 @@ return array(
 	),
 	'DB'=>array(
 		'type'=>'mysql',
-        'tablePre'=>'ut_',
+        'tablePre'=>'xph_',
 		'read'=>array(
-			array('host'=>'localhost:3306','user'=>'root','passwd'=>'admin','name'=>'utao'),
+			array('host'=>'210.209.127.195:3306','user'=>'keenhome','passwd'=>'gong2008','name'=>'xiaopihai'),
+			//array('host'=>'localhost:3306','user'=>'root','passwd'=>'admin','name'=>'xiaopihai'),
 		),
 
 		'write'=>array(
-			'host'=>'localhost:3306','user'=>'root','passwd'=>'admin','name'=>'utao',
+			'host'=>'210.209.127.195:3306','user'=>'keenhome','passwd'=>'gong2008','name'=>'xiaopihai',
+			//'host'=>'localhost:3306','user'=>'root','passwd'=>'admin','name'=>'xiaopihai',
 		),
 	),
 	'langPath' => 'language',
@@ -27,7 +29,7 @@ return array(
 	'safe' => 'cookie',
 	'safeLevel' => 'none',
 	'lang' => 'zh_sc',
-	'debug'=> false,
+	'debug'=> true,
 	'configExt'=> array('site_config'=>'config/site_config.php'),
 	'encryptKey'=>'3dc6d57b24120128e849511c13fa36de',
 );
